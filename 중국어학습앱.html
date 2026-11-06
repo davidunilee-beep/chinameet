@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematic Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        neutral: {
+                            850: '#1a1a1a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at center, #262626 0%, #0a0a0a 100%);
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 md:p-8">
+
+    <main class="w-full max-w-5xl">
+        <!-- Header -->
+        <header class="mb-10 text-center animate-in fade-in duration-1000">
+            <h1 class="text-4xl md:text-5xl font-semibold text-white tracking-tight mb-3">
+                Cinematic View
+            </h1>
+            <p class="text-gray-400 font-light text-lg">
+                Experience high-fidelity playback in a distraction-free environment.
+            </p>
+        </header>
+
+        <!-- Video Container -->
+        <div class="glass-panel rounded-3xl p-2 shadow-2xl transition-all duration-500 hover:shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+            <div class="overflow-hidden rounded-2xl bg-black aspect-video flex items-center justify-center">
+                <video 
+                    controls 
+                    class="w-full h-full object-contain"
+                    preload="metadata"
+                >
+                    <source src="https://opal.google/board/blobs/6a0f905c-60b2-4c8c-9aa4-b20c78f59d37" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+            <!-- Metadata Strip -->
+            <div class="px-4 py-6 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-xs uppercase tracking-widest text-emerald-500 font-medium">Live Stream</span>
+                </div>
+                <div class="text-gray-500 text-sm font-light">
+                    Optimized Rendering Mode
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructional Subtext -->
+        <div class="mt-8 text-center">
+            <p class="text-gray-600 text-sm">
+                Use the standard player controls to manage playback. Ensure volume is adjusted on your device.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        // Micro-interaction for the video player interaction
+        const video = document.querySelector('video');
+        video.addEventListener('play', () => {
+            console.log('Playback started');
+        });
+    </script>
+</body>
+</html>

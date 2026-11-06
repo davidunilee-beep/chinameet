@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171a23">
+  <meta name="description" content="Chinameet — PC와 모바일에서 간편하게 여는 중국어 영상 학습 공간">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Chinameet">
+  <title>Chinameet · 중국어 영상</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/app-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./app.css">
+  <script defer src="./install.js"></script>
+</head>
+<body>
+  <main>
+    <nav aria-label="앱 메뉴"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">中</span> Chinameet</a><span class="tag">중국어 영상</span></nav>
+    <section class="install-banner" aria-label="앱 다운로드">
+      <div><strong>언제든, 더 가까이.</strong><p id="installStatus" role="status">홈 화면에 추가하고 Chinameet를 간편하게 여세요.</p></div>
+      <div class="actions"><button id="installButton" type="button">앱 설치하기 ↗</button><a id="pcShortcut" href="#" download="Chinameet.url" hidden>PC 바로가기 저장 ↓</a></div>
+    </section>
+    <header><span class="eyebrow">YOUR CHINESE MOMENT</span><h1>중국어와 만나는 시간</h1><p>편안하게 영상을 보고, 나만의 속도로 익혀 보세요.</p></header>
+    <section class="player-panel" aria-label="동영상 플레이어">
+      <video id="video" controls playsinline preload="metadata" aria-label="중국어 영상">
+        <source src="https://opal.google/board/blobs/6a0f905c-60b2-4c8c-9aa4-b20c78f59d37" type="video/mp4">
+        이 브라우저에서는 동영상을 재생할 수 없습니다.
+      </video>
+      <div class="player-footer"><span><i aria-hidden="true"></i> Chinameet 영상</span><span>재생 · 볼륨 · 전체 화면</span></div>
+      <p id="videoStatus" class="video-status" role="status" hidden></p>
+    </section>
+    <footer>영상은 인터넷 연결이 필요합니다.<br>PC와 모바일에서 같은 주소로 이용할 수 있어요.</footer>
+  </main>
+  <dialog id="installDialog" aria-labelledby="installTitle">
+    <div class="dialog-top"><h2 id="installTitle">Chinameet 설치 안내</h2><button id="closeGuide" type="button" aria-label="설치 안내 닫기">×</button></div>
+    <p id="installGuide"></p><ol id="installSteps"></ol><p>설치 후에도 영상 재생에는 인터넷이 필요해요.</p>
+    <a id="pcDownload" class="download" href="#" download="Chinameet.url" hidden>PC 바로가기 파일 저장 ↓</a>
+  </dialog>
+</body>
+</html>
