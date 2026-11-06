@@ -1,14 +1,14 @@
 {
   "id": "./",
-  "name": "Chinameet · 중국어 영상",
+  "name": "Chinameet · 중국어 기초 학습",
   "short_name": "Chinameet",
   "lang": "ko",
-  "description": "PC와 모바일에서 간편하게 여는 중국어 영상 공간",
+  "description": "중국어 단어·병음·예문을 익히고 발음을 듣고 따라 말하는 학습 앱",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#11141b",
-  "theme_color": "#171a23",
+  "background_color": "#FAFAF7",
+  "theme_color": "#C0392B",
   "icons": [
     { "src": "./icons/app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "./icons/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

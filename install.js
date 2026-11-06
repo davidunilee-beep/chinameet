@@ -66,10 +66,4 @@
   $('pcShortcut').href = shortcut; $('pcDownload').href = shortcut;
   window.addEventListener('pagehide', event => { if (!event.persisted) URL.revokeObjectURL(shortcut); });
   if ('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('./sw.js').catch(() => { status.textContent = '앱 설치 준비에 실패했어요. 인터넷 연결 후 새로고침해 주세요.'; });
-  $('video').addEventListener('error', showVideoError);
-  $('video').querySelector('source').addEventListener('error', showVideoError);
-  function showVideoError() {
-    $('videoStatus').hidden = false;
-    $('videoStatus').textContent = '영상을 불러오지 못했어요. 인터넷 연결을 확인해 주세요. 계속 재생되지 않으면 원본 영상 링크가 만료되었거나 접근이 제한된 상태일 수 있습니다.';
-  }
 })();

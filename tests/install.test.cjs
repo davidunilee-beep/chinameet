@@ -33,9 +33,6 @@ test('Android embedded browser opens clean Chrome intent',async()=>{
   const app=setup({ua:'Android KAKAOTALK Chrome/130',platform:'Linux'}); await app.element('installButton').listeners.click();
   assert.match(app.location.assigned,/package=com.android.chrome/); assert.ok(!app.location.assigned.includes('private'));
 });
-test('video failure provides a useful message',()=>{
-  const app=setup(); app.element('source').listeners.error(); assert.equal(app.element('videoStatus').hidden,false); assert.match(app.element('videoStatus').textContent,/불러오지 못/);
-});
 test('all manifest and shell files exist, and icon dimensions are valid',()=>{
   const manifest=JSON.parse(fs.readFileSync('manifest.webmanifest','utf8'));
   for(const icon of manifest.icons){ const data=fs.readFileSync(icon.src); const [w,h]=icon.sizes.split('x').map(Number); assert.equal(data.readUInt32BE(16),w); assert.equal(data.readUInt32BE(20),h); }

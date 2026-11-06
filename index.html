@@ -1,41 +1,1309 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#171a23">
-  <meta name="description" content="Chinameet — PC와 모바일에서 간편하게 여는 중국어 영상 학습 공간">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Chinameet">
-  <title>Chinameet · 중국어 영상</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icons/app-192.png" type="image/png">
-  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="./app.css">
-  <script defer src="./install.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文学习 - 중국어 기초 학습</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #FAFAF7;
+            color: #1C1C1C;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 268px;
+            background: white;
+            border-right: 1px solid #E5E7EB;
+            overflow-y: auto;
+            padding: 20px 12px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 0 16px 20px;
+            border-bottom: 1px solid #F3F4F6;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-badge {
+            width: 36px;
+            height: 36px;
+            background: #C0392B;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .sidebar-title h1 {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.2;
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .sidebar-title p {
+            font-size: 11px;
+            color: #9CA3AF;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #E5E7EB;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #C0392B;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .categories {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .category-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            font-size: 13px;
+            color: #4B5563;
+        }
+
+        .category-btn:hover {
+            background: #F9FAFB;
+        }
+
+        .category-btn.active {
+            color: white;
+        }
+
+        .category-btn .emoji {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .category-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .category-name {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-progress {
+            width: 100%;
+            height: 4px;
+            background: #E5E7EB;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .category-progress-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        /* 메인 콘텐츠 */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-w-0;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-category {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-category .emoji {
+            font-size: 20px;
+        }
+
+        .header-category-info h2 {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .header-category-info p {
+            font-size: 11px;
+            color: #9CA3AF;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-counter {
+            background: #F3F4F6;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .progress-counter strong {
+            color: #1C1C1C;
+        }
+
+        .progress-bar-top {
+            height: 2px;
+            background: #E5E7EB;
+        }
+
+        .progress-bar-top-fill {
+            height: 100%;
+            transition: width 0.4s ease;
+        }
+
+        /* 메인 카드 영역 */
+        .content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .card-wrapper {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+        }
+
+        .card-top {
+            padding: 40px 32px 28px;
+            background: linear-gradient(160deg, #FAFAF7 0%, #F5F0EB 100%);
+            text-align: center;
+            position: relative;
+        }
+
+        .card-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .card-chinese {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 80px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            line-height: 1;
+            color: #1C1C1C;
+        }
+
+        .card-pinyin {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        .card-meaning {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4B5563;
+        }
+
+        .card-divider {
+            height: 1px;
+            background: #E5E7EB;
+            margin: 0 32px;
+        }
+
+        .card-bottom {
+            padding: 24px 28px;
+        }
+
+        .sentence-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .sentence-bar {
+            width: 4px;
+            border-radius: 2px;
+            flex-shrink: 0;
+            margin-top: 4px;
+            height: 52px;
+        }
+
+        .sentence-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sentence-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1C1C1C;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .sentence-pinyin {
+            font-size: 12px;
+            color: #9CA3AF;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .sentence-meaning {
+            font-size: 14px;
+            color: #4B5563;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* 컨트롤 버튼 */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-nav {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border: 1px solid #E5E7EB;
+            color: #4B5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .btn-nav:hover {
+            border-color: #D1D5DB;
+        }
+
+        .btn-action {
+            height: 44px;
+            padding: 0 16px;
+            background: white;
+            border: 1px solid #E5E7EB;
+            color: #4B5563;
+        }
+
+        .btn-action:hover {
+            border-color: #D1D5DB;
+        }
+
+        .btn-action.active {
+            color: white;
+        }
+
+        .btn-action.listening {
+            background: #C0392B;
+            border-color: #C0392B;
+        }
+
+        /* 진행 상황 */
+        .stats {
+            margin-top: 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #E5E7EB;
+            padding: 16px;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .stats-header span:first-child {
+            color: #9CA3AF;
+            font-weight: 500;
+        }
+
+        .stats-header span:last-child {
+            color: #1C1C1C;
+            font-weight: 600;
+        }
+
+        .stats-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .stats-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .word-dots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            max-height: 64px;
+            overflow: hidden;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dot:hover {
+            transform: scale(1.5);
+        }
+
+        .tone-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            font-size: 11px;
+            color: #9CA3AF;
+        }
+
+        .tone-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tone-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                max-height: 40vh;
+                border-right: none;
+                border-bottom: 1px solid #E5E7EB;
+                overflow-x: auto;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+
+            .main {
+                flex: 1;
+            }
+
+            .card-chinese {
+                font-size: 60px;
+            }
+
+            .card-top {
+                padding: 32px 24px 20px;
+            }
+
+            .header {
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+
+            .content {
+                padding: 16px 12px;
+            }
+
+            .card-wrapper {
+                max-width: 100%;
+            }
+
+            .controls {
+                gap: 6px;
+            }
+
+            .btn-action {
+                padding: 0 12px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-chinese {
+                font-size: 48px;
+            }
+
+            .card-pinyin {
+                font-size: 16px;
+            }
+
+            .card-meaning {
+                font-size: 16px;
+            }
+
+            .sentence-text {
+                font-size: 16px;
+            }
+
+            .btn-nav {
+                width: 40px;
+                height: 40px;
+            }
+
+            .btn-action {
+                height: 40px;
+                padding: 0 10px;
+                font-size: 11px;
+            }
+        }
+
+        /* 성공 파티클 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.success {
+            border-left: 4px solid #27AE60;
+            background: #F0FDF4;
+            color: #27AE60;
+        }
+
+        .toast.error {
+            border-left: 4px solid #DC2626;
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast.hide {
+            animation: slideOut 0.3s ease forwards;
+        }
+    </style>
+
+    <meta name="theme-color" content="#C0392B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Chinameet">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" type="image/png" href="./icons/app-192.png">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="./app.css?v=learning-2">
+    <script defer src="./install.js?v=learning-2"></script>
 </head>
 <body>
-  <main>
-    <nav aria-label="앱 메뉴"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">中</span> Chinameet</a><span class="tag">중국어 영상</span></nav>
-    <section class="install-banner" aria-label="앱 다운로드">
-      <div><strong>언제든, 더 가까이.</strong><p id="installStatus" role="status">홈 화면에 추가하고 Chinameet를 간편하게 여세요.</p></div>
-      <div class="actions"><button id="installButton" type="button">앱 설치하기 ↗</button><a id="pcShortcut" href="#" download="Chinameet.url" hidden>PC 바로가기 저장 ↓</a></div>
+    <section class="cm-install" aria-label="Chinameet 앱 다운로드">
+        <div><strong>Chinameet · 중국어 기초 학습</strong><p id="installStatus" role="status">홈 화면에 추가하고 간편하게 학습하세요.</p></div>
+        <div class="cm-actions"><button id="installButton" type="button">앱 설치하기 ↗</button><a id="pcShortcut" href="#" download="Chinameet.url" hidden>PC 바로가기 저장 ↓</a></div>
     </section>
-    <header><span class="eyebrow">YOUR CHINESE MOMENT</span><h1>중국어와 만나는 시간</h1><p>편안하게 영상을 보고, 나만의 속도로 익혀 보세요.</p></header>
-    <section class="player-panel" aria-label="동영상 플레이어">
-      <video id="video" controls playsinline preload="metadata" aria-label="중국어 영상">
-        <source src="https://opal.google/board/blobs/6a0f905c-60b2-4c8c-9aa4-b20c78f59d37" type="video/mp4">
-        이 브라우저에서는 동영상을 재생할 수 없습니다.
-      </video>
-      <div class="player-footer"><span><i aria-hidden="true"></i> Chinameet 영상</span><span>재생 · 볼륨 · 전체 화면</span></div>
-      <p id="videoStatus" class="video-status" role="status" hidden></p>
-    </section>
-    <footer>영상은 인터넷 연결이 필요합니다.<br>PC와 모바일에서 같은 주소로 이용할 수 있어요.</footer>
-  </main>
-  <dialog id="installDialog" aria-labelledby="installTitle">
-    <div class="dialog-top"><h2 id="installTitle">Chinameet 설치 안내</h2><button id="closeGuide" type="button" aria-label="설치 안내 닫기">×</button></div>
-    <p id="installGuide"></p><ol id="installSteps"></ol><p>설치 후에도 영상 재생에는 인터넷이 필요해요.</p>
-    <a id="pcDownload" class="download" href="#" download="Chinameet.url" hidden>PC 바로가기 파일 저장 ↓</a>
-  </dialog>
+    <dialog id="installDialog" aria-labelledby="installTitle">
+        <div class="cm-dialog-top"><h2 id="installTitle">Chinameet 설치 안내</h2><button id="closeGuide" type="button" aria-label="설치 안내 닫기">×</button></div>
+        <p id="installGuide"></p><ol id="installSteps"></ol><p>발음·음성 인식 지원은 기기와 브라우저에 따라 다릅니다. 따라 말하기에는 마이크 권한과 인터넷 연결이 필요할 수 있어요.</p>
+        <a id="pcDownload" class="cm-download" href="#" download="Chinameet.url" hidden>PC 바로가기 파일 저장 ↓</a>
+    </dialog>
+    <div class="container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <div class="sidebar-badge">中</div>
+                    <div>
+                        <h1>中文学习</h1>
+                        <p>중국어 기초 학습</p>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="totalProgressFill"></div>
+                </div>
+                <div style="font-size: 11px; color: #9CA3AF; margin-top: 6px;">
+                    <span id="totalLearned">0</span> / <span id="totalWords">580</span>
+                </div>
+            </div>
+
+            <div class="categories" id="categoriesContainer"></div>
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main">
+            <!-- 헤더 -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-category">
+                        <span class="emoji" id="headerEmoji"></span>
+                        <div class="header-category-info">
+                            <h2 id="headerName"></h2>
+                            <p id="headerNameZh"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="progress-counter">
+                        <span id="currentIndex">1</span> / <span id="totalIndex">90</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-bar-top">
+                <div class="progress-bar-top-fill" id="categoryProgressFill"></div>
+            </div>
+
+            <!-- 메인 카드 -->
+            <div class="content">
+                <div class="card-wrapper">
+                    <div class="card">
+                        <div class="card-top" id="cardTop">
+                            <div class="card-chinese" id="cardChinese">你好</div>
+                            <div class="card-pinyin" id="cardPinyin" style="color: #2563EB;">nǐ hǎo</div>
+                            <div class="card-meaning" id="cardMeaning">안녕하세요</div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <div class="card-bottom">
+                            <div class="sentence-container">
+                                <div class="sentence-bar" id="sentenceBar"></div>
+                                <div class="sentence-content">
+                                    <div class="sentence-text" id="sentenceText">你好，很高兴认识你。</div>
+                                    <div class="sentence-pinyin" id="sentencePinyin">Nǐ hǎo, hěn gāoxìng rènshi nǐ.</div>
+                                    <div class="sentence-meaning" id="sentenceMeaning">안녕하세요, 만나서 반갑습니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 컨트롤 버튼 -->
+                    <div class="controls">
+                        <button class="btn-nav" id="prevBtn" title="이전 (←)">◀</button>
+                        <button class="btn-action" id="playWordBtn" title="단어 발음">🔊 단어</button>
+                        <button class="btn-action" id="playSentenceBtn" title="문장 발음">🔊 문장</button>
+                        <button class="btn-action" id="listenBtn" title="따라하기 (R)">🎤 따라</button>
+                        <button class="btn-nav" id="nextBtn" title="다음 (→)">▶</button>
+                    </div>
+
+                    <!-- 진행 상황 -->
+                    <div class="stats">
+                        <div class="stats-header">
+                            <span id="statsLabel"></span>
+                            <span><span id="categoryLearned">0</span> / <span id="categoryTotal">90</span></span>
+                        </div>
+                        <div class="stats-bar">
+                            <div class="stats-fill" id="categoryStatsFill"></div>
+                        </div>
+                        <div class="word-dots" id="wordDots"></div>
+                    </div>
+
+                    <!-- 성조 범례 -->
+                    <div class="tone-legend">
+                        <div class="tone-item">
+                            <div class="tone-dot" style="background: #2563EB;"></div>
+                            <span style="color: #2563EB;">ā 1성</span>
+                        </div>
+                        <div class="tone-item">
+                            <div class="tone-dot" style="background: #16A34A;"></div>
+                            <span style="color: #16A34A;">á 2성</span>
+                        </div>
+                        <div class="tone-item">
+                            <div class="tone-dot" style="background: #EA580C;"></div>
+                            <span style="color: #EA580C;">ǎ 3성</span>
+                        </div>
+                        <div class="tone-item">
+                            <div class="tone-dot" style="background: #DC2626;"></div>
+                            <span style="color: #DC2626;">à 4성</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <script>
+        // 중국어 단어 데이터
+        const categories = [
+            {
+                id: "daily",
+                name: "일상생활",
+                nameZh: "日常生活",
+                emoji: "🏠",
+                color: "#3B82F6",
+                words: [
+                    {id:"d001",word:"你好",pinyin:"nǐ hǎo",meaning:"안녕하세요",sentence:"你好，很高兴认识你。",sentencePinyin:"Nǐ hǎo, hěn gāoxìng rènshi nǐ.",sentenceMeaning:"안녕하세요, 만나서 반갑습니다."},
+                    {id:"d002",word:"谢谢",pinyin:"xièxiè",meaning:"감사합니다",sentence:"谢谢你的帮助。",sentencePinyin:"Xièxiè nǐ de bāngzhù.",sentenceMeaning:"당신의 도움을 감사합니다."},
+                    {id:"d003",word:"对不起",pinyin:"duìbù qǐ",meaning:"죄송합니다",sentence:"对不起，我迟到了。",sentencePinyin:"Duìbù qǐ, wǒ chídào le.",sentenceMeaning:"죄송합니다, 저는 늦었습니다."},
+                    {id:"d004",word:"没关系",pinyin:"méi guānxi",meaning:"괜찮습니다",sentence:"没关系，下次准时来。",sentencePinyin:"Méi guānxi, xiàcì zhǔnshí lái.",sentenceMeaning:"괜찮습니다, 다음에 정시에 오세요."},
+                    {id:"d005",word:"早上好",pinyin:"zǎoshang hǎo",meaning:"좋은 아침",sentence:"早上好！今天天气真好。",sentencePinyin:"Zǎoshang hǎo! Jīntiān tiānqì zhēn hǎo.",sentenceMeaning:"좋은 아침입니다! 오늘 날씨가 정말 좋습니다."},
+                    {id:"d006",word:"晚安",pinyin:"wǎn ān",meaning:"안녕히 주무세요",sentence:"晚安，明天见。",sentencePinyin:"Wǎn ān, míngtiān jiàn.",sentenceMeaning:"안녕히 주무세요, 내일 봐요."},
+                    {id:"d007",word:"再见",pinyin:"zàijiàn",meaning:"안녕히 가세요",sentence:"再见！下周见。",sentencePinyin:"Zàijiàn! Xiàzhōu jiàn.",sentenceMeaning:"안녕히 가세요! 다음 주에 봐요."},
+                    {id:"d008",word:"请",pinyin:"qǐng",meaning:"부탁합니다",sentence:"请坐。",sentencePinyin:"Qǐng zuò.",sentenceMeaning:"앉으세요."},
+                    {id:"d009",word:"好的",pinyin:"hǎo de",meaning:"좋습니다",sentence:"好的，我明白了。",sentencePinyin:"Hǎo de, wǒ míngbai le.",sentenceMeaning:"좋습니다, 저는 이해했습니다."},
+                    {id:"d010",word:"不好意思",pinyin:"búhǎo yìsi",meaning:"미안합니다/부끄럽습니다",sentence:"不好意思，我不知道。",sentencePinyin:"Búhǎo yìsi, wǒ búzhīdào.",sentenceMeaning:"미안합니다, 저는 모릅니다."}
+                ]
+            },
+            {
+                id: "food",
+                name: "음식음료",
+                nameZh: "食物饮料",
+                emoji: "🍜",
+                color: "#F59E0B",
+                words: [
+                    {id:"f001",word:"米饭",pinyin:"mǐfàn",meaning:"밥",sentence:"我喜欢吃米饭。",sentencePinyin:"Wǒ xǐhuān chī mǐfàn.",sentenceMeaning:"저는 밥 먹는 것을 좋아합니다."},
+                    {id:"f002",word:"面条",pinyin:"miàntiáo",meaning:"국수",sentence:"这是中国面条。",sentencePinyin:"Zhè shì Zhōngguó miàntiáo.",sentenceMeaning:"이것은 중국 국수입니다."},
+                    {id:"f003",word:"水",pinyin:"shuǐ",meaning:"물",sentence:"请给我一杯水。",sentencePinyin:"Qǐng gěi wǒ yī bēi shuǐ.",sentenceMeaning:"저에게 한 잔의 물을 주세요."},
+                    {id:"f004",word:"茶",pinyin:"chá",meaning:"차",sentence:"你喜欢喝茶吗？",sentencePinyin:"Nǐ xǐhuān hē chá ma?",sentenceMeaning:"당신은 차 마시는 것을 좋아하나요?"},
+                    {id:"f005",word:"咖啡",pinyin:"kāfēi",meaning:"커피",sentence:"我每天喝咖啡。",sentencePinyin:"Wǒ měitiān hē kāfēi.",sentenceMeaning:"저는 매일 커피를 마십니다."},
+                    {id:"f006",word:"苹果",pinyin:"píngguǒ",meaning:"사과",sentence:"这个苹果很甜。",sentencePinyin:"Zhège píngguǒ hěn tián.",sentenceMeaning:"이 사과는 매우 달콤합니다."},
+                    {id:"f007",word:"香蕉",pinyin:"xiāngjiāo",meaning:"바나나",sentence:"我吃了两根香蕉。",sentencePinyin:"Wǒ chīle liǎng gēn xiāngjiāo.",sentenceMeaning:"저는 바나나 두 개를 먹었습니다."},
+                    {id:"f008",word:"鸡蛋",pinyin:"jīdàn",meaning:"계란",sentence:"早餐吃鸡蛋和面包。",sentencePinyin:"Zǎocān chī jīdàn hé miànbāo.",sentenceMeaning:"아침 식사로 계란과 빵을 먹습니다."},
+                    {id:"f009",word:"牛奶",pinyin:"niúnǎi",meaning:"우유",sentence:"孩子们喝牛奶。",sentencePinyin:"Háizi men hē niúnǎi.",sentenceMeaning:"아이들은 우유를 마십니다."},
+                    {id:"f010",word:"面包",pinyin:"miànbāo",meaning:"빵",sentence:"我买了一个面包。",sentencePinyin:"Wǒ mǎile yī ge miànbāo.",sentenceMeaning:"저는 빵 하나를 샀습니다."}
+                ]
+            },
+            {
+                id: "animals",
+                name: "동물",
+                nameZh: "动物",
+                emoji: "🐶",
+                color: "#8B5CF6",
+                words: [
+                    {id:"a001",word:"狗",pinyin:"gǒu",meaning:"개",sentence:"这是一只可爱的狗。",sentencePinyin:"Zhè shì yī zhī kěài de gǒu.",sentenceMeaning:"이것은 귀여운 개입니다."},
+                    {id:"a002",word:"猫",pinyin:"māo",meaning:"고양이",sentence:"猫喜欢睡觉。",sentencePinyin:"Māo xǐhuān shuìjiào.",sentenceMeaning:"고양이는 자는 것을 좋아합니다."},
+                    {id:"a003",word:"鸟",pinyin:"niǎo",meaning:"새",sentence:"鸟在树上唱歌。",sentencePinyin:"Niǎo zài shù shang chànggē.",sentenceMeaning:"새가 나무 위에서 노래합니다."},
+                    {id:"a004",word:"鱼",pinyin:"yú",meaning:"물고기",sentence:"水里有很多鱼。",sentencePinyin:"Shuǐ lǐ yǒu hěnduō yú.",sentenceMeaning:"물속에는 많은 물고기가 있습니다."},
+                    {id:"a005",word:"老鼠",pinyin:"lǎoshǔ",meaning:"쥐",sentence:"老鼠很害怕猫。",sentencePinyin:"Lǎoshǔ hěn hàipà māo.",sentenceMeaning:"쥐는 고양이를 매우 두려워합니다."},
+                    {id:"a006",word:"兔子",pinyin:"tùzi",meaning:"토끼",sentence:"兔子有长长的耳朵。",sentencePinyin:"Tùzi yǒu chángcháng de ěrduǒ.",sentenceMeaning:"토끼는 긴 귀를 가지고 있습니다."},
+                    {id:"a007",word:"熊",pinyin:"xióng",meaning:"곰",sentence:"熊在森林里生活。",sentencePinyin:"Xióng zài sēnlín lǐ shēnghuó.",sentenceMeaning:"곰은 숲에서 삽니다."},
+                    {id:"a008",word:"狮子",pinyin:"shīzi",meaning:"사자",sentence:"狮子是森林之王。",sentencePinyin:"Shīzi shì sēnlín zhī wáng.",sentenceMeaning:"사자는 숲의 왕입니다."},
+                    {id:"a009",word:"大象",pinyin:"dàxiàng",meaning:"코끼리",sentence:"大象有长长的鼻子。",sentencePinyin:"Dàxiàng yǒu chángcháng de bízi.",sentenceMeaning:"코끼리는 긴 코를 가지고 있습니다."},
+                    {id:"a010",word:"蛇",pinyin:"shé",meaning:"뱀",sentence:"蛇在草地里爬行。",sentencePinyin:"Shé zài cǎodì lǐ páxíng.",sentenceMeaning:"뱀이 풀밭에서 기어갑니다."}
+                ]
+            },
+            {
+                id: "nature",
+                name: "자연환경",
+                nameZh: "自然环境",
+                emoji: "🌳",
+                color: "#10B981",
+                words: [
+                    {id:"n001",word:"树",pinyin:"shù",meaning:"나무",sentence:"这棵树很高。",sentencePinyin:"Zhè kē shù hěn gāo.",sentenceMeaning:"이 나무는 매우 높습니다."},
+                    {id:"n002",word:"花",pinyin:"huā",meaning:"꽃",sentence:"花园里有很多花。",sentencePinyin:"Huāyuán lǐ yǒu hěnduō huā.",sentenceMeaning:"정원에는 많은 꽃이 있습니다."},
+                    {id:"n003",word:"山",pinyin:"shān",meaning:"산",sentence:"我们爬山去。",sentencePinyin:"Wǒmen páshān qù.",sentenceMeaning:"우리는 산에 올라갑니다."},
+                    {id:"n004",word:"河",pinyin:"hé",meaning:"강",sentence:"河里的水很清。",sentencePinyin:"Hé lǐ de shuǐ hěn qīng.",sentenceMeaning:"강의 물은 매우 맑습니다."},
+                    {id:"n005",word:"海",pinyin:"hǎi",meaning:"바다",sentence:"我喜欢去海边。",sentencePinyin:"Wǒ xǐhuān qù hǎibiān.",sentenceMeaning:"저는 해변에 가는 것을 좋아합니다."},
+                    {id:"n006",word:"太阳",pinyin:"tàiyáng",meaning:"태양",sentence:"太阳很热。",sentencePinyin:"Tàiyáng hěn rè.",sentenceMeaning:"태양은 매우 뜨겁습니다."},
+                    {id:"n007",word:"月亮",pinyin:"yuèliàng",meaning:"달",sentence:"月亮很圆。",sentencePinyin:"Yuèliàng hěn yuán.",sentenceMeaning:"달은 매우 동글납니다."},
+                    {id:"n008",word:"星星",pinyin:"xīngxing",meaning:"별",sentence:"晚上有很多星星。",sentencePinyin:"Wǎnshang yǒu hěnduō xīngxing.",sentenceMeaning:"밤에는 많은 별이 있습니다."},
+                    {id:"n009",word:"云",pinyin:"yún",meaning:"구름",sentence:"天空中有白云。",sentencePinyin:"Tiānkōng zhōng yǒu báiyún.",sentenceMeaning:"하늘에는 흰 구름이 있습니다."},
+                    {id:"n010",word:"雨",pinyin:"yǔ",meaning:"비",sentence:"下雨了，我带伞。",sentencePinyin:"Xiàyǔ le, wǒ dài sǎn.",sentenceMeaning:"비가 내렸습니다, 저는 우산을 가져갑니다."}
+                ]
+            },
+            {
+                id: "school",
+                name: "학교",
+                nameZh: "学校",
+                emoji: "📚",
+                color: "#EF4444",
+                words: [
+                    {id:"s001",word:"学生",pinyin:"xuésheng",meaning:"학생",sentence:"我是一个学生。",sentencePinyin:"Wǒ shì yī ge xuésheng.",sentenceMeaning:"저는 학생입니다."},
+                    {id:"s002",word:"老师",pinyin:"lǎoshī",meaning:"선생님",sentence:"老师很和蔼。",sentencePinyin:"Lǎoshī hěn héaǐ.",sentenceMeaning:"선생님은 매우 친절합니다."},
+                    {id:"s003",word:"教室",pinyin:"jiàoshì",meaning:"교실",sentence:"教室里有30个学生。",sentencePinyin:"Jiàoshì lǐ yǒu 30 ge xuésheng.",sentenceMeaning:"교실에는 30명의 학생이 있습니다."},
+                    {id:"s004",word:"书",pinyin:"shū",meaning:"책",sentence:"我喜欢看书。",sentencePinyin:"Wǒ xǐhuān kànshū.",sentenceMeaning:"저는 책 읽는 것을 좋아합니다."},
+                    {id:"s005",word:"笔",pinyin:"bǐ",meaning:"펜",sentence:"我用笔写字。",sentencePinyin:"Wǒ yòng bǐ xiězì.",sentenceMeaning:"저는 펜으로 글을 씁니다."},
+                    {id:"s006",word:"纸",pinyin:"zhǐ",meaning:"종이",sentence:"这是一张白纸。",sentencePinyin:"Zhè shì yī zhāng báizhǐ.",sentenceMeaning:"이것은 흰 종이 한 장입니다."},
+                    {id:"s007",word:"黑板",pinyin:"hēibǎn",meaning:"칠판",sentence:"老师在黑板上写字。",sentencePinyin:"Lǎoshī zài hēibǎn shang xiězì.",sentenceMeaning:"선생님은 칠판에 글을 씁니다."},
+                    {id:"s008",word:"考试",pinyin:"kǎoshì",meaning:"시험",sentence:"明天有考试。",sentencePinyin:"Míngtiān yǒu kǎoshì.",sentenceMeaning:"내일 시험이 있습니다."},
+                    {id:"s009",word:"作业",pinyin:"zuòyè",meaning:"숙제",sentence:"今天的作业很多。",sentencePinyin:"Jīntiān de zuòyè hěnduō.",sentenceMeaning:"오늘의 숙제가 많습니다."},
+                    {id:"s010",word:"成绩",pinyin:"chéngjì",meaning:"성적",sentence:"我的成绩很好。",sentencePinyin:"Wǒ de chéngjì hěn hǎo.",sentenceMeaning:"제 성적은 좋습니다."}
+                ]
+            },
+            {
+                id: "transport",
+                name: "교통",
+                nameZh: "交通",
+                emoji: "🚗",
+                color: "#06B6D4",
+                words: [
+                    {id:"t001",word:"汽车",pinyin:"qìchē",meaning:"자동차",sentence:"我有一辆红色的汽车。",sentencePinyin:"Wǒ yǒu yī liàng hóngsè de qìchē.",sentenceMeaning:"저는 빨간 자동차를 가지고 있습니다."},
+                    {id:"t002",word:"火车",pinyin:"huǒchē",meaning:"기차",sentence:"火车很快。",sentencePinyin:"Huǒchē hěn kuài.",sentenceMeaning:"기차는 매우 빠릅니다."},
+                    {id:"t003",word:"飞机",pinyin:"fēijī",meaning:"비행기",sentence:"飞机在天空飞行。",sentencePinyin:"Fēijī zài tiānkōng fēixíng.",sentenceMeaning:"비행기가 하늘에서 날고 있습니다."},
+                    {id:"t004",word:"船",pinyin:"chuán",meaning:"배",sentence:"船在海上航行。",sentencePinyin:"Chuán zài hǎi shang hángxíng.",sentenceMeaning:"배가 바다에서 항해합니다."},
+                    {id:"t005",word:"自行车",pinyin:"zìxíngchē",meaning:"자전거",sentence:"我骑自行车去学校。",sentencePinyin:"Wǒ qī zìxíngchē qù xuéxiào.",sentenceMeaning:"저는 자전거를 타고 학교에 갑니다."},
+                    {id:"t006",word:"公交车",pinyin:"gōngjiāochē",meaning:"버스",sentence:"我坐公交车上班。",sentencePinyin:"Wǒ zuò gōngjiāochē shàngbān.",sentenceMeaning:"저는 버스를 타고 출근합니다."},
+                    {id:"t007",word:"出租车",pinyin:"chūzūchē",meaning:"택시",sentence:"我打了一辆出租车。",sentencePinyin:"Wǒ dǎle yī liàng chūzūchē.",sentenceMeaning:"저는 택시를 탔습니다."},
+                    {id:"t008",word:"地铁",pinyin:"dìtiě",meaning:"지하철",sentence:"地铁很方便。",sentencePinyin:"Dìtiě hěn fāngbiàn.",sentenceMeaning:"지하철은 매우 편리합니다."},
+                    {id:"t009",word:"路",pinyin:"lù",meaning:"길",sentence:"这条路很宽。",sentencePinyin:"Zhè tiáo lù hěn kuān.",sentenceMeaning:"이 길은 매우 넓습니다."},
+                    {id:"t010",word:"停车场",pinyin:"tíngchēchǎng",meaning:"주차장",sentence:"停车场里有很多车。",sentencePinyin:"Tíngchēchǎng lǐ yǒu hěnduō chē.",sentenceMeaning:"주차장에는 많은 자동차가 있습니다."}
+                ]
+            },
+            {
+                id: "shopping",
+                name: "쇼핑",
+                nameZh: "购物",
+                emoji: "🛍️",
+                color: "#EC4899",
+                words: [
+                    {id:"sh001",word:"商店",pinyin:"shāngdiàn",meaning:"가게",sentence:"商店里有很多东西。",sentencePinyin:"Shāngdiàn lǐ yǒu hěnduō dōngxi.",sentenceMeaning:"가게에는 많은 물건이 있습니다."},
+                    {id:"sh002",word:"价格",pinyin:"jiàgé",meaning:"가격",sentence:"这个价格很便宜。",sentencePinyin:"Zhège jiàgé hěn piányí.",sentenceMeaning:"이 가격은 매우 저렴합니다."},
+                    {id:"sh003",word:"钱",pinyin:"qián",meaning:"돈",sentence:"我没有足够的钱。",sentencePinyin:"Wǒ méiyǒu zúgòu de qián.",sentenceMeaning:"저는 충분한 돈이 없습니다."},
+                    {id:"sh004",word:"买",pinyin:"mǎi",meaning:"사다",sentence:"我买了一件新衣服。",sentencePinyin:"Wǒ mǎile yī jiàn xīn yīfu.",sentenceMeaning:"저는 새 옷을 샀습니다."},
+                    {id:"sh005",word:"卖",pinyin:"mài",meaning:"팔다",sentence:"他在卖书。",sentencePinyin:"Tā zài mài shū.",sentenceMeaning:"그는 책을 팔고 있습니다."},
+                    {id:"sh006",word:"衣服",pinyin:"yīfu",meaning:"옷",sentence:"这件衣服很漂亮。",sentencePinyin:"Zhè jiàn yīfu hěn piàoliang.",sentenceMeaning:"이 옷은 매우 예쁩니다."},
+                    {id:"sh007",word:"鞋",pinyin:"xié",meaning:"신발",sentence:"我需要买新鞋。",sentencePinyin:"Wǒ xūyào mǎi xīn xié.",sentenceMeaning:"저는 새 신발을 사야 합니다."},
+                    {id:"sh008",word:"帽子",pinyin:"màozi",meaning:"모자",sentence:"这个帽子很适合你。",sentencePinyin:"Zhège màozi hěn shìhé nǐ.",sentenceMeaning:"이 모자는 당신에게 매우 잘 어울립니다."},
+                    {id:"sh009",word:"包",pinyin:"bāo",meaning:"가방",sentence:"我的包很重。",sentencePinyin:"Wǒ de bāo hěn zhòng.",sentenceMeaning:"제 가방은 매우 무겁습니다."},
+                    {id:"sh010",word:"收银台",pinyin:"shōuyín tái",meaning:"계산대",sentence:"请到收银台付款。",sentencePinyin:"Qǐng dào shōuyín tái fùkuǎn.",sentenceMeaning:"계산대에서 결제해 주세요."}
+                ]
+            },
+            {
+                id: "family",
+                name: "가족",
+                nameZh: "家庭",
+                emoji: "👨‍👩‍👧‍👦",
+                color: "#F97316",
+                words: [
+                    {id:"fa001",word:"爸爸",pinyin:"bàba",meaning:"아버지",sentence:"我爸爸是医生。",sentencePinyin:"Wǒ bàba shì yīshēng.",sentenceMeaning:"제 아버지는 의사입니다."},
+                    {id:"fa002",word:"妈妈",pinyin:"māma",meaning:"어머니",sentence:"我妈妈很温柔。",sentencePinyin:"Wǒ māma hěn wēnróu.",sentenceMeaning:"제 어머니는 매우 부드럽습니다."},
+                    {id:"fa003",word:"哥哥",pinyin:"gēge",meaning:"형",sentence:"我哥哥在大学。",sentencePinyin:"Wǒ gēge zài dàxué.",sentenceMeaning:"제 형은 대학에 있습니다."},
+                    {id:"fa004",word:"妹妹",pinyin:"mèimei",meaning:"여동생",sentence:"我妹妹很聪明。",sentencePinyin:"Wǒ mèimei hěn cōngming.",sentenceMeaning:"제 여동생은 매우 똑똑합니다."},
+                    {id:"fa005",word:"奶奶",pinyin:"nǎinai",meaning:"할머니",sentence:"我奶奶很老。",sentencePinyin:"Wǒ nǎinai hěn lǎo.",sentenceMeaning:"제 할머니는 매우 나이가 많습니다."},
+                    {id:"fa006",word:"爷爷",pinyin:"yéye",meaning:"할아버지",sentence:"我爷爷喜欢散步。",sentencePinyin:"Wǒ yéye xǐhuān sǎnbù.",sentenceMeaning:"제 할아버지는 산책하는 것을 좋아합니다."},
+                    {id:"fa007",word:"叔叔",pinyin:"shūshu",meaning:"삼촌",sentence:"我叔叔在北京。",sentencePinyin:"Wǒ shūshu zài Běijīng.",sentenceMeaning:"제 삼촌은 베이징에 있습니다."},
+                    {id:"fa008",word:"阿姨",pinyin:"āyí",meaning:"이모",sentence:"我阿姨很漂亮。",sentencePinyin:"Wǒ āyí hěn piàoliang.",sentenceMeaning:"제 이모는 매우 예쁩니다."},
+                    {id:"fa009",word:"表哥",pinyin:"biǎogē",meaning:"사촌형",sentence:"我表哥很高。",sentencePinyin:"Wǒ biǎogē hěn gāo.",sentenceMeaning:"제 사촌형은 매우 큽니다."},
+                    {id:"fa010",word:"表妹",pinyin:"biǎomèi",meaning:"사촌여동생",sentence:"我表妹很可爱。",sentencePinyin:"Wǒ biǎomèi hěn kěài.",sentenceMeaning:"제 사촌여동생은 매우 귀엽습니다."}
+                ]
+            },
+            {
+                id: "body",
+                name: "신체",
+                nameZh: "身体",
+                emoji: "👤",
+                color: "#06B6D4",
+                words: [
+                    {id:"b001",word:"头",pinyin:"tóu",meaning:"머리",sentence:"我的头很疼。",sentencePinyin:"Wǒ de tóu hěn téng.",sentenceMeaning:"제 머리가 매우 아픕니다."},
+                    {id:"b002",word:"眼睛",pinyin:"yǎnjing",meaning:"눈",sentence:"她的眼睛很大。",sentencePinyin:"Tā de yǎnjing hěn dà.",sentenceMeaning:"그녀의 눈은 매우 큽니다."},
+                    {id:"b003",word:"鼻子",pinyin:"bízi",meaning:"코",sentence:"我的鼻子很敏感。",sentencePinyin:"Wǒ de bízi hěn mǐngǎn.",sentenceMeaning:"제 코는 매우 민감합니다."},
+                    {id:"b004",word:"嘴",pinyin:"zuǐ",meaning:"입",sentence:"不要张开嘴。",sentencePinyin:"búyào zhāngkāi zuǐ.",sentenceMeaning:"입을 열지 마세요."},
+                    {id:"b005",word:"牙齿",pinyin:"yáchǐ",meaning:"치아",sentence:"我需要刷牙齿。",sentencePinyin:"Wǒ xūyào shuā yáchǐ.",sentenceMeaning:"저는 이를 닦아야 합니다."},
+                    {id:"b006",word:"耳朵",pinyin:"ěrduǒ",meaning:"귀",sentence:"我的耳朵很灵敏。",sentencePinyin:"Wǒ de ěrduǒ hěn língmǐn.",sentenceMeaning:"제 귀는 매우 민첩합니다."},
+                    {id:"b007",word:"手",pinyin:"shǒu",meaning:"손",sentence:"请举起你的手。",sentencePinyin:"Qǐng jǔqǐ nǐ de shǒu.",sentenceMeaning:"손을 들어주세요."},
+                    {id:"b008",word:"脚",pinyin:"jiǎo",meaning:"발",sentence:"我的脚很疼。",sentencePinyin:"Wǒ de jiǎo hěn téng.",sentenceMeaning:"제 발이 매우 아픕니다."},
+                    {id:"b009",word:"心",pinyin:"xīn",meaning:"마음/심장",sentence:"我用心去做。",sentencePinyin:"Wǒ yòng xīn qù zuò.",sentenceMeaning:"저는 마음을 다해 합니다."},
+                    {id:"b010",word:"背",pinyin:"bèi",meaning:"등",sentence:"我的背很疼。",sentencePinyin:"Wǒ de bèi hěn téng.",sentenceMeaning:"제 등이 매우 아픕니다."}
+                ]
+            },
+            {
+                id: "weather",
+                name: "날씨",
+                nameZh: "天气",
+                emoji: "☀️",
+                color: "#FBBF24",
+                words: [
+                    {id:"w001",word:"晴天",pinyin:"qīngtiān",meaning:"맑은 날",sentence:"今天是晴天。",sentencePinyin:"Jīntiān shì qīngtiān.",sentenceMeaning:"오늘은 맑은 날입니다."},
+                    {id:"w002",word:"下雨",pinyin:"xiàyǔ",meaning:"비가 내리다",sentence:"明天会下雨。",sentencePinyin:"Míngtiān huì xiàyǔ.",sentenceMeaning:"내일 비가 올 것입니다."},
+                    {id:"w003",word:"下雪",pinyin:"xiàxuě",meaning:"눈이 내리다",sentence:"冬天会下雪。",sentencePinyin:"Dōngtiān huì xiàxuě.",sentenceMeaning:"겨울에는 눈이 올 것입니다."},
+                    {id:"w004",word:"冷",pinyin:"lěng",meaning:"춥다",sentence:"今天很冷。",sentencePinyin:"Jīntiān hěn lěng.",sentenceMeaning:"오늘은 매우 춥습니다."},
+                    {id:"w005",word:"热",pinyin:"rè",meaning:"덥다",sentence:"夏天很热。",sentencePinyin:"Xiàtiān hěn rè.",sentenceMeaning:"여름은 매우 덥습니다."},
+                    {id:"w006",word:"温暖",pinyin:"wēnnuǎn",meaning:"따뜻하다",sentence:"春天很温暖。",sentencePinyin:"Chūntiān hěn wēnnuǎn.",sentenceMeaning:"봄은 매우 따뜻합니다."},
+                    {id:"w007",word:"风",pinyin:"fēng",meaning:"바람",sentence:"今天风很大。",sentencePinyin:"Jīntiān fēng hěn dà.",sentenceMeaning:"오늘 바람이 매우 큽니다."},
+                    {id:"w008",word:"雾",pinyin:"wù",meaning:"안개",sentence:"早上有雾。",sentencePinyin:"Zǎoshang yǒu wù.",sentenceMeaning:"아침에 안개가 있습니다."},
+                    {id:"w009",word:"雷",pinyin:"léi",meaning:"천둥",sentence:"下雨时有雷。",sentencePinyin:"Xiàyǔ shí yǒu léi.",sentenceMeaning:"비올 때 천둥이 있습니다."},
+                    {id:"w010",word:"闪电",pinyin:"shǎndiàn",meaning:"번개",sentence:"闪电很危险。",sentencePinyin:"Shǎndiàn hěn wēixiǎn.",sentenceMeaning:"번개는 매우 위험합니다."}
+                ]
+            },
+            {
+                id: "job",
+                name: "직업",
+                nameZh: "职业",
+                emoji: "💼",
+                color: "#8B5CF6",
+                words: [
+                    {id:"j001",word:"医生",pinyin:"yīshēng",meaning:"의사",sentence:"我想成为医生。",sentencePinyin:"Wǒ xiǎng chéngwéi yīshēng.",sentenceMeaning:"저는 의사가 되고 싶습니다."},
+                    {id:"j002",word:"老师",pinyin:"lǎoshī",meaning:"선생님",sentence:"我的妈妈是老师。",sentencePinyin:"Wǒ de māma shì lǎoshī.",sentenceMeaning:"제 어머니는 선생님입니다."},
+                    {id:"j003",word:"工程师",pinyin:"gōngchéngshī",meaning:"엔지니어",sentence:"他是一个工程师。",sentencePinyin:"Tā shì yī ge gōngchéngshī.",sentenceMeaning:"그는 엔지니어입니다."},
+                    {id:"j004",word:"律师",pinyin:"lǜshī",meaning:"변호사",sentence:"律师很聪明。",sentencePinyin:"Lǜshī hěn cōngming.",sentenceMeaning:"변호사는 매우 똑똑합니다."},
+                    {id:"j005",word:"演员",pinyin:"yǎnyuán",meaning:"배우",sentence:"她是一个演员。",sentencePinyin:"Tā shì yī ge yǎnyuán.",sentenceMeaning:"그녀는 배우입니다."},
+                    {id:"j006",word:"音乐家",pinyin:"yīnyuèjiā",meaning:"음악가",sentence:"他是一个音乐家。",sentencePinyin:"Tā shì yī ge yīnyuèjiā.",sentenceMeaning:"그는 음악가입니다."},
+                    {id:"j007",word:"画家",pinyin:"huàjiā",meaning:"화가",sentence:"她是一个画家。",sentencePinyin:"Tā shì yī ge huàjiā.",sentenceMeaning:"그녀는 화가입니다."},
+                    {id:"j008",word:"作家",pinyin:"zuòjiā",meaning:"작가",sentence:"他是一个作家。",sentencePinyin:"Tā shì yī ge zuòjiā.",sentenceMeaning:"그는 작가입니다."},
+                    {id:"j009",word:"农民",pinyin:"nóngmín",meaning:"농민",sentence:"农民在田里工作。",sentencePinyin:"Nóngmín zài tián lǐ gōngzuò.",sentenceMeaning:"농민은 들에서 일합니다."},
+                    {id:"j010",word:"商人",pinyin:"shāngrén",meaning:"상인",sentence:"他是一个商人。",sentencePinyin:"Tā shì yī ge shāngrén.",sentenceMeaning:"그는 상인입니다."}
+                ]
+            },
+            {
+                id: "sports",
+                name: "스포츠/취미",
+                nameZh: "运动/爱好",
+                emoji: "⚽",
+                color: "#EF4444",
+                words: [
+                    {id:"sp001",word:"足球",pinyin:"zúqiú",meaning:"축구",sentence:"我喜欢踢足球。",sentencePinyin:"Wǒ xǐhuān tī zúqiú.",sentenceMeaning:"저는 축구를 차는 것을 좋아합니다."},
+                    {id:"sp002",word:"篮球",pinyin:"lánqiú",meaning:"농구",sentence:"他很擅长打篮球。",sentencePinyin:"Tā hěn shàncháng dǎ lánqiú.",sentenceMeaning:"그는 농구를 잘합니다."},
+                    {id:"sp003",word:"网球",pinyin:"wǎngqiú",meaning:"테니스",sentence:"我们打网球吧。",sentencePinyin:"Wǒmen dǎ wǎngqiú ba.",sentenceMeaning:"우리 테니스를 칩시다."},
+                    {id:"sp004",word:"乒乓球",pinyin:"pīngpāngqiú",meaning:"탁구",sentence:"乒乓球很有趣。",sentencePinyin:"Pīngpāngqiú hěn yǒuqù.",sentenceMeaning:"탁구는 매우 재미있습니다."},
+                    {id:"sp005",word:"游泳",pinyin:"yóuyǒng",meaning:"수영",sentence:"我喜欢游泳。",sentencePinyin:"Wǒ xǐhuān yóuyǒng.",sentenceMeaning:"저는 수영을 좋아합니다."},
+                    {id:"sp006",word:"跑步",pinyin:"páobù",meaning:"달리기",sentence:"每天跑步很健康。",sentencePinyin:"Měitiān páobù hěn jiànkāng.",sentenceMeaning:"매일 달리기는 매우 건강합니다."},
+                    {id:"sp007",word:"骑自行车",pinyin:"qī zìxíngchē",meaning:"자전거 타기",sentence:"骑自行车很有趣。",sentencePinyin:"Qī zìxíngchē hěn yǒuqù.",sentenceMeaning:"자전거 타기는 매우 재미있습니다."},
+                    {id:"sp008",word:"滑冰",pinyin:"huábīng",meaning:"스케이트",sentence:"冬天可以滑冰。",sentencePinyin:"Dōngtiān kěyǐ huábīng.",sentenceMeaning:"겨울에는 스케이트를 탈 수 있습니다."},
+                    {id:"sp009",word:"唱歌",pinyin:"chànggē",meaning:"노래하기",sentence:"我喜欢唱歌。",sentencePinyin:"Wǒ xǐhuān chànggē.",sentenceMeaning:"저는 노래하는 것을 좋아합니다."},
+                    {id:"sp010",word:"跳舞",pinyin:"tiàowǔ",meaning:"춤추기",sentence:"她喜欢跳舞。",sentencePinyin:"Tā xǐhuān tiàowǔ.",sentenceMeaning:"그녀는 춤추는 것을 좋아합니다."}
+                ]
+            }
+        ];
+
+        let currentCategoryIndex = 0;
+        let currentWordIndex = 0;
+        let learnedWords = new Set();
+        let isListening = false;
+        let recognition = null;
+
+        function getToneColor(pinyin) {
+            if (/[āēīōūǖ]/.test(pinyin)) return "#2563EB";
+            if (/[áéíóúǘ]/.test(pinyin)) return "#16A34A";
+            if (/[ǎěǐǒǔǚ]/.test(pinyin)) return "#EA580C";
+            if (/[àèìòùǜ]/.test(pinyin)) return "#DC2626";
+            return "#7C3AED";
+        }
+
+        function updateUI() {
+            const category = categories[currentCategoryIndex];
+            const word = category.words[currentWordIndex];
+
+            // 헤더 업데이트
+            document.getElementById("headerEmoji").textContent = category.emoji;
+            document.getElementById("headerName").textContent = category.name;
+            document.getElementById("headerNameZh").textContent = category.nameZh;
+            document.getElementById("currentIndex").textContent = currentWordIndex + 1;
+            document.getElementById("totalIndex").textContent = category.words.length;
+
+            // 카드 업데이트
+            const cardTop = document.getElementById("cardTop");
+            cardTop.style.borderTop = `4px solid ${category.color}`;
+            document.getElementById("cardChinese").textContent = word.word;
+            document.getElementById("cardPinyin").textContent = word.pinyin;
+            document.getElementById("cardPinyin").style.color = getToneColor(word.pinyin);
+            document.getElementById("cardMeaning").textContent = word.meaning;
+
+            document.getElementById("sentenceText").textContent = word.sentence;
+            document.getElementById("sentencePinyin").textContent = word.sentencePinyin;
+            document.getElementById("sentenceMeaning").textContent = word.sentenceMeaning;
+            document.getElementById("sentenceBar").style.background = category.color;
+
+            // 진행 상황 업데이트
+            const categoryLearned = category.words.filter(w => learnedWords.has(w.id)).length;
+            document.getElementById("categoryLearned").textContent = categoryLearned;
+            document.getElementById("categoryTotal").textContent = category.words.length;
+            document.getElementById("statsLabel").textContent = `${category.name} 학습 현황`;
+
+            const categoryProgress = (categoryLearned / category.words.length) * 100;
+            document.getElementById("categoryStatsFill").style.width = categoryProgress + "%";
+            document.getElementById("categoryStatsFill").style.background = category.color;
+
+            const categoryProgressFill = document.getElementById("categoryProgressFill");
+            const totalProgress = (currentWordIndex + 1) / category.words.length * 100;
+            categoryProgressFill.style.width = totalProgress + "%";
+            categoryProgressFill.style.background = category.color;
+
+            // 전체 진행 상황
+            const totalWords = categories.reduce((s, c) => s + c.words.length, 0);
+            const totalLearned = learnedWords.size;
+            document.getElementById("totalLearned").textContent = totalLearned;
+            document.getElementById("totalWords").textContent = totalWords;
+            const totalProgressPercent = (totalLearned / totalWords) * 100;
+            document.getElementById("totalProgressFill").style.width = totalProgressPercent + "%";
+
+            // 단어 점 업데이트
+            const wordDots = document.getElementById("wordDots");
+            wordDots.innerHTML = "";
+            category.words.forEach((w, i) => {
+                const dot = document.createElement("div");
+                dot.className = "dot";
+                if (i === currentWordIndex) {
+                    dot.style.width = "10px";
+                    dot.style.height = "10px";
+                    dot.style.background = category.color;
+                } else if (learnedWords.has(w.id)) {
+                    dot.style.background = "#27AE60";
+                    dot.style.opacity = "0.9";
+                } else {
+                    dot.style.background = "#CBD5E1";
+                    dot.style.opacity = "0.5";
+                }
+                dot.onclick = () => {
+                    currentWordIndex = i;
+                    updateUI();
+                    autoPlayWord();
+                };
+                wordDots.appendChild(dot);
+            });
+
+            // 카테고리 버튼 업데이트
+            document.querySelectorAll(".category-btn").forEach((btn, i) => {
+                if (i === currentCategoryIndex) {
+                    btn.classList.add("active");
+                    btn.style.background = categories[i].color;
+                    btn.style.color = "white";
+                } else {
+                    btn.classList.remove("active");
+                    btn.style.background = "transparent";
+                    btn.style.color = "#4B5563";
+                }
+            });
+
+            autoPlayWord();
+        }
+
+        function autoPlayWord() {
+            const category = categories[currentCategoryIndex];
+            const word = category.words[currentWordIndex];
+            speakText(word.word, () => {
+                setTimeout(() => {
+                    speakText(word.sentence);
+                }, 700);
+            });
+        }
+
+        function speakText(text, onEnd) {
+            if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "zh-CN";
+            utterance.rate = 0.85;
+            if (onEnd) utterance.onend = onEnd;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add("hide");
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("음성 인식 미지원", "error");
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+                isListening = false;
+                document.getElementById("listenBtn").textContent = "🎤 따라";
+                document.getElementById("listenBtn").classList.remove("listening");
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = "zh-CN";
+            recognition.continuous = false;
+            recognition.maxAlternatives = 5;
+
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById("listenBtn").textContent = "듣는 중...";
+                document.getElementById("listenBtn").classList.add("listening");
+            };
+
+            recognition.onresult = (event) => {
+                isListening = false;
+                document.getElementById("listenBtn").textContent = "🎤 따라";
+                document.getElementById("listenBtn").classList.remove("listening");
+
+                const results = Array.from(event.results[0]).map(r => r.transcript.trim());
+                const category = categories[currentCategoryIndex];
+                const word = category.words[currentWordIndex];
+                const targetWord = word.word;
+
+                const isCorrect = results.some(r =>
+                    r === targetWord || r.includes(targetWord) || targetWord.includes(r)
+                );
+
+                if (isCorrect) {
+                    learnedWords.add(word.id);
+                    showToast("🎉 정확합니다! " + targetWord, "success");
+                    createParticles();
+                    setTimeout(() => {
+                        if (currentWordIndex < category.words.length - 1) {
+                            currentWordIndex++;
+                        } else {
+                            currentWordIndex = 0;
+                        }
+                        updateUI();
+                    }, 1500);
+                } else {
+                    showToast("다시 시도해 보세요", "error");
+                    setTimeout(() => speakText(targetWord), 500);
+                }
+            };
+
+            recognition.onerror = () => {
+                isListening = false;
+                document.getElementById("listenBtn").textContent = "🎤 따라";
+                document.getElementById("listenBtn").classList.remove("listening");
+            };
+
+            recognition.start();
+        }
+
+        function createParticles() {
+            const colors = ["#C0392B", "#E8A838", "#27AE60", "#3498DB", "#9B59B6"];
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement("div");
+                particle.className = "particle";
+                particle.style.left = Math.random() * 100 + "%";
+                particle.style.top = "-10px";
+                particle.style.width = (Math.random() * 10 + 6) + "px";
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[i % colors.length];
+                particle.style.borderRadius = "50%";
+                document.getElementById("particles").appendChild(particle);
+
+                const duration = Math.random() * 1.5 + 1;
+                const delay = Math.random() * 0.4;
+                particle.style.animation = `none`;
+                setTimeout(() => {
+                    particle.style.transition = `all ${duration}s ease-in`;
+                    particle.style.transform = `translateY(${window.innerHeight + 20}px) translateX(${(Math.random() - 0.5) * 300}px) rotate(${Math.random() * 720}deg)`;
+                    particle.style.opacity = "0";
+                }, 10);
+
+                setTimeout(() => particle.remove(), (duration + delay) * 1000);
+            }
+        }
+
+        // 이벤트 리스너
+        document.getElementById("prevBtn").onclick = () => {
+            if (currentWordIndex > 0) {
+                currentWordIndex--;
+            } else {
+                currentWordIndex = categories[currentCategoryIndex].words.length - 1;
+            }
+            updateUI();
+        };
+
+        document.getElementById("nextBtn").onclick = () => {
+            const category = categories[currentCategoryIndex];
+            if (currentWordIndex < category.words.length - 1) {
+                currentWordIndex++;
+            } else {
+                currentWordIndex = 0;
+            }
+            updateUI();
+        };
+
+        document.getElementById("playWordBtn").onclick = () => {
+            const word = categories[currentCategoryIndex].words[currentWordIndex];
+            speakText(word.word);
+        };
+
+        document.getElementById("playSentenceBtn").onclick = () => {
+            const word = categories[currentCategoryIndex].words[currentWordIndex];
+            speakText(word.sentence);
+        };
+
+        document.getElementById("listenBtn").onclick = startListening;
+
+        // 카테고리 버튼 생성
+        const categoriesContainer = document.getElementById("categoriesContainer");
+        categories.forEach((cat, i) => {
+            const btn = document.createElement("button");
+            btn.className = "category-btn";
+            if (i === 0) btn.classList.add("active");
+            btn.innerHTML = `
+                <span class="emoji">${cat.emoji}</span>
+                <div class="category-info">
+                    <div class="category-name">
+                        <span>${cat.name}</span>
+                        <span>${cat.words.filter(w => learnedWords.has(w.id)).length}/${cat.words.length}</span>
+                    </div>
+                    <div class="category-progress">
+                        <div class="category-progress-fill" style="width: 0%; background: ${cat.color};"></div>
+                    </div>
+                </div>
+            `;
+            btn.onclick = () => {
+                currentCategoryIndex = i;
+                currentWordIndex = 0;
+                updateUI();
+            };
+            categoriesContainer.appendChild(btn);
+        });
+
+        // 키보드 단축키
+        document.addEventListener("keydown", (e) => {
+            if (document.getElementById("installDialog").open || /INPUT|TEXTAREA|SELECT|BUTTON|A/.test(e.target.tagName) || e.target.isContentEditable) return;
+            if (e.key === "ArrowRight" || e.key === " ") {
+                e.preventDefault();
+                document.getElementById("nextBtn").click();
+            }
+            if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                document.getElementById("prevBtn").click();
+            }
+            if (e.key === "r" || e.key === "R") {
+                document.getElementById("listenBtn").click();
+            }
+            if (e.key === "p" || e.key === "P") {
+                document.getElementById("playWordBtn").click();
+            }
+        });
+
+        // 초기화
+        updateUI();
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE = 'chinameet-shell-v1';
+const CACHE = 'chinameet-shell-v2-learning';
 const SHELL = ['./', './index.html', './app.css', './install.js', './manifest.webmanifest', './icons/app-192.png', './icons/app-512.png', './icons/apple-touch-icon.png', './icons/app-maskable.png'];
 const urls = SHELL.map(path => new URL(path, self.registration.scope).href);
 self.addEventListener('install', event => { event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(urls))); self.skipWaiting(); });
