@@ -8,8 +8,9 @@ let html = source.replace('</head>', `
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" type="image/png" href="./icons/app-192.png">
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="./app.css?v=learning-2">
-    <script defer src="./install.js?v=learning-2"></script>
+    <script src="./install-capture.js"></script>
+    <link rel="stylesheet" href="./app.css?v=android-install-3">
+    <script defer src="./install.js?v=android-install-3"></script>
 </head>`).replace('<body>', `<body>
     <section class="cm-install" aria-label="Chinameet 앱 다운로드">
         <div><strong>Chinameet · 중국어 기초 학습</strong><p id="installStatus" role="status">홈 화면에 추가하고 간편하게 학습하세요.</p></div>
@@ -18,6 +19,8 @@ let html = source.replace('</head>', `
     <dialog id="installDialog" aria-labelledby="installTitle">
         <div class="cm-dialog-top"><h2 id="installTitle">Chinameet 설치 안내</h2><button id="closeGuide" type="button" aria-label="설치 안내 닫기">×</button></div>
         <p id="installGuide"></p><ol id="installSteps"></ol><p>발음·음성 인식 지원은 기기와 브라우저에 따라 다릅니다. 따라 말하기에는 마이크 권한과 인터넷 연결이 필요할 수 있어요.</p>
+        <button id="installRetry" class="cm-download" type="button" hidden>앱 설치하기 ↗</button>
+        <a id="androidChrome" class="cm-download" href="#" hidden>Chrome에서 열기 ↗</a>
         <a id="pcDownload" class="cm-download" href="#" download="Chinameet.url" hidden>PC 바로가기 파일 저장 ↓</a>
     </dialog>`);
 // Keep original lessons and layout; repair the microphone stop-handler scope.
